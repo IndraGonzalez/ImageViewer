@@ -15,29 +15,28 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Application extends JFrame {
 
-    // Esto es igual en todas las interfaces de usuario
     
     private final Map<String,Command> commands = new HashMap<>();
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Throwable {
         new Application().setVisible(true);
     }
     
     private ImageDisplay imageDisplay;
 
-    public Application() {
+    public Application() throws Throwable {
         // Crear la Interfaz de Usuario y los comandos
         this.deployUI();
         this.createCommands();
     }
 
-    private void deployUI() {
+    private void deployUI() throws Throwable {
         this.setTitle("Image Viewer");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(500, 500));
@@ -51,19 +50,31 @@ public class Application extends JFrame {
         commands.put("prev", new PrevImageCommand(imageDisplay));
     }
 
-    private ImagePanel imagePanel() {
-        String directory = JOptionPane.showInputDialog(this, "Introduzca un directorio");
-        System.out.println(directory);
+    private ImagePanel imagePanel() throws Throwable {
+        
+        String directory = ".";
+        
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setDialogTitle("Select Folder");
+        fileChooser.setApproveButtonText("Select Folder");
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        int dialog = fileChooser.showOpenDialog( this );
+        if( dialog == JFileChooser.APPROVE_OPTION )
+        {
+            directory = fileChooser.getSelectedFile().getPath();
+        }
+
         ImagePanel imagePanel = new ImagePanel(image(directory));
         imageDisplay = imagePanel;
         return imagePanel;
     }
+ 
 
     private Image image(String directory) {
-        // El directorio habría que sacarlo de otro sitio (pasarlo por parámetros,
-        // pedírselo al usuario...)
         return new FileImageReader(directory).read();
-    }    
+    }
 
     private Component toolbar() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));

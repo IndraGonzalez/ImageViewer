@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 public class FileImageReader implements ImageReader {
     
     private final File[] files;
-    // Las constantes van con cammelCase en mayúsculas
     private static final String[] ImageExtensions = {".jpg",".png",".gif"};
             
     public FileImageReader(String path) {
